@@ -5,7 +5,8 @@
 
 ## 線上 Demo
 
-https://miniclinic-anson106.onrender.com
+https://miniclinic-anson106-2nd.onrender.com
+
 
 ## 技術棧
 
@@ -28,7 +29,7 @@ https://miniclinic-anson106.onrender.com
 ## 本機執行
 
 ```bash
-git clone https://github.com/anson106/miniclinic.git
+git clone https://github.com/anson106/miniclinic2.git
 cd miniclinic
 ./mvnw spring-boot:run
 ```
@@ -69,5 +70,4 @@ src/
 2026 年 Java 程式設計課程作業
 
 ## 聲明
-
 所有病患資料均為虛構，僅供教學使用。
