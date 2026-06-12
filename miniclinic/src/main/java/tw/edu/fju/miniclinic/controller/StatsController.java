@@ -1,17 +1,18 @@
 package tw.edu.fju.miniclinic.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import tw.edu.fju.miniclinic.model.AppointmentRepository;
 import tw.edu.fju.miniclinic.model.DoctorRepository;
 import tw.edu.fju.miniclinic.model.PatientRepository;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
-@Controller
+@RestController
 public class StatsController {
 
     @Autowired
@@ -23,22 +24,31 @@ public class StatsController {
     @Autowired
     private AppointmentRepository appointmentRepo;
 
-    @GetMapping("/stats")
-    public String showStats(Model model) {
-        // 基本總數統計
-        model.addAttribute("doctorCount", doctorRepo.count());
-        model.addAttribute("patientCount", patientRepo.count());
-        model.addAttribute("appointmentCount", appointmentRepo.count());
+    @GetMapping("/api/stats")
+    public ResponseEntity<Map<String, Object>> getStats() {
+        // 分別計算總數，JPA 預設已提供 count() 方法
+        long totalDoctors = doctorRepo.count();
+        long totalPatients = patientRepo.count();
+        long totalAppointments = appointmentRepo.count();
 
-        // 在 Controller 中程式化計算依科別分組的掛號數
-        Map<String, Long> deptStats = appointmentRepo.findAll().stream()
-                .filter(appt -> appt.getDoctor() != null && appt.getDoctor().getDepartment() != null)
-                .collect(Collectors.groupingBy(
-                        appt -> appt.getDoctor().getDepartment(),
-                        Collectors.counting()
-                ));
-        model.addAttribute("deptStats", deptStats);
+        // 計算各狀態掛號數
+        long bookedCount = appointmentRepo.countByStatus("BOOKED");
+        long completedCount = appointmentRepo.countByStatus("COMPLETED");
+        long cancelledCount = appointmentRepo.countByStatus("CANCELLED");
 
-        return "stats";
+        // 建立 byStatus 巢狀物件
+        Map<String, Object> byStatus = new LinkedHashMap<>();
+        byStatus.put("BOOKED", bookedCount);
+        byStatus.put("COMPLETED", completedCount);
+        byStatus.put("CANCELLED", cancelledCount);
+
+        // 組裝最終的回傳結果
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("totalDoctors", totalDoctors);
+        result.put("totalPatients", totalPatients);
+        result.put("totalAppointments", totalAppointments);
+        result.put("byStatus", byStatus);
+
+        return ResponseEntity.ok(result);
     }
 }
