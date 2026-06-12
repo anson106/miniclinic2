@@ -98,6 +98,40 @@
             })
             .catch(error => console.error('Error:', error));
         }
+
+        async function completeAppointment(appointmentId) {
+            if (!confirm('確定要將此掛號標記為「看診完成」嗎？')) {
+                return;
+            }
+
+            // 動態取得 CSRF Token 與 Header Name
+            const csrfToken = document.querySelector('meta[name="_csrf"]')?.content;
+            const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content;
+
+            const requestHeaders = {
+                'Content-Type': 'application/json'
+            };
+            
+            if (csrfToken && csrfHeader) {
+                requestHeaders[csrfHeader] = csrfToken;
+            }
+
+            try {
+                const response = await fetch(`/api/appointments/${appointmentId}/status`, {
+                    method: 'PUT',
+                    headers: requestHeaders,
+                    body: JSON.stringify({ status: 'COMPLETED' })
+                });
+
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    alert('更新狀態失敗，請確認後再試。');
+                }
+            } catch (error) {
+                alert('發生系統連線錯誤，請稍後再試。');
+            }
+        }
     </script>
 </body>
 </html>
