@@ -11,6 +11,8 @@
         .logout-form button { background: #94A3B8; color: white; padding: 6px 14px; border: none; border-radius: 4px; cursor: pointer; }
         .cancel-btn { background: #EF4444; color: white; padding: 4px 10px; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9em; }
         .cancel-btn:hover { background: #DC2626; }
+        .complete-btn { background: #10B981; color: white; padding: 4px 10px; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9em; margin-left: 8px; }
+        .complete-btn:hover { background: #059669; }
         .header-actions { display: flex; align-items: center; gap: 15px; }
         table { width: 100%; border-collapse: collapse; margin-top: 24px; }
         th, td { padding: 12px; text-align: left; border-bottom: 1px solid #E2E8F0; }
@@ -65,6 +67,10 @@
                             th:data-id="${appt.apptId}"
                             class="cancel-btn"
                             onclick="cancelAppointment(this)">取消</button>
+                    <!-- 新增的「看診完成」按鈕 -->
+                    <button th:if="${appt.status == 'BOOKED'}"
+                            class="complete-btn"
+                            th:onclick="'completeAppointment(' + ${appt.apptId} + ')'">看診完成</button>
                 </td>
             </tr>
         </tbody>
