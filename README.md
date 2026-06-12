@@ -69,5 +69,19 @@ src/
 
 2026 年 Java 程式設計課程作業
 
-## 聲明
-所有病患資料均為虛構，僅供教學使用。
+## 🌟 近期更新功能 (Recent Updates)
+
+### 1. 醫師看診完成功能 (Dashboard)
+- **功能描述**：在醫師的 Dashboard「今日掛號」清單中，為狀態為 `BOOKED` 的掛號新增「看診完成」按鈕。
+- **實作細節**：
+  - 點擊後觸發防呆確認視窗，避免醫師誤觸。
+  - 透過 JavaScript `fetch` 非同步呼叫 `PUT /api/appointments/{id}/status`，將狀態更新為 `COMPLETED`。
+  - 實作 CSRF Token 動態擷取，確保在 Spring Security 防護下能正常發送請求。
+  - 狀態更新成功後自動重新整理頁面以反映最新狀態。
+
+### 2. 系統營運統計 API (`/api/stats`)
+- **功能描述**：新增免登入的開放端點，供外部驗收工具（如 AI Agent）進行系統狀態查核。
+- **實作細節**：
+  - 端點路徑：`GET /api/stats`
+  - 整合 Spring Data JPA 的 `count()` 與自訂的 `countByStatus` 方法。
+  - 回傳系統資料摘要，包含總醫師數、總病患數、總掛號數，以及依狀態 (`BOOKED`, `COMPLETED`, `CANCELLED`) 分類的掛號統計。
